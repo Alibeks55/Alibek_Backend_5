@@ -63,7 +63,7 @@ def category_detail_api_view(request, id):
 def product_list_api_view(request):
 
     if request.method == 'GET':
-        products = Product.objects.select_related('category').all() #1
+        products = Product.objects.select_related('category').all()
         data = ProductListSerializers(products, many=True).data
         return Response(data=data, status=status.HTTP_200_OK)
 
@@ -92,7 +92,7 @@ def product_list_api_view(request):
 @api_view(['GET', 'PUT', 'DELETE'])
 def product_detail_api_view(request, id):
     try:
-        products = Product.objects.select_related('category').get(id=id)#2
+        products = Product.objects.select_related('category').get(id=id)
     except Product.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -120,7 +120,7 @@ def product_detail_api_view(request, id):
 @api_view(http_method_names=['GET', 'POST'])
 def review_list_api_view(request):
     if request.method == 'GET':
-        reviews = Review.objects.select_related('product').all()#3
+        reviews = Review.objects.select_related('product').all()
         data = ReviewListSerializers(reviews, many=True).data
         return  Response(data=data, status=status.HTTP_200_OK)
 
