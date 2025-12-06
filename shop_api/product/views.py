@@ -6,7 +6,8 @@ from unicodedata import category
 from  .models import Category, Product, Review
 
 from .serializers import CategoryListSerializers, CategoryDetailSerializers, ProductListSerializers, \
-    ProductDetailSerializers, ReviewListSerializers, ReviewDetailSerializers, ProductReviewListSerializers
+    ProductDetailSerializers, ReviewListSerializers, ReviewDetailSerializers, ProductReviewListSerializers, \
+    CategoryValidateSerializer, ProductValidateSerializer, ReviewValidateSerializer
 
 
 @api_view(http_method_names=['GET', 'POST'])
@@ -18,6 +19,11 @@ def category_list_api_view(request):
         return Response(data=data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
+        serializer = CategoryValidateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return  Response(status=status.HTTP_400_BAD_REQUEST,
+                             data=serializer.errors)
+
         name = request.data.get('name')
         categorys = Category.objects.create(
             name = name
@@ -39,6 +45,9 @@ def category_detail_api_view(request, id):
         return Response(data=data, status=status.HTTP_200_OK)
 
     elif request.method == 'PUT':
+        serializer = CategoryValidateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         categorys.name = request.data.get('name')
         categorys.save()
         return Response(status=status.HTTP_201_CREATED,
@@ -54,11 +63,16 @@ def category_detail_api_view(request, id):
 def product_list_api_view(request):
 
     if request.method == 'GET':
-        products = Product.objects.all()
+        products = Product.objects.select_related('category').all() #1
         data = ProductListSerializers(products, many=True).data
         return Response(data=data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
+        serializer = ProductValidateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(status=status.HTTP_400_BAD_REQUEST,
+                            data=serializer.errors)
+
         title = request.data.get('title')
         description = request.data.get('description')
         price = request.data.get('price')
@@ -78,7 +92,7 @@ def product_list_api_view(request):
 @api_view(['GET', 'PUT', 'DELETE'])
 def product_detail_api_view(request, id):
     try:
-        products = Product.objects.get(id=id)
+        products = Product.objects.select_related('category').get(id=id)#2
     except Product.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -87,6 +101,9 @@ def product_detail_api_view(request, id):
         return Response(data=data, status=status.HTTP_200_OK)
 
     elif request.method == 'PUT':
+        serializer = ProductValidateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         products.title  = request.data.get('title')
         products.description =request.data.get('description')
         products.price = request.data.get('price')
@@ -103,11 +120,16 @@ def product_detail_api_view(request, id):
 @api_view(http_method_names=['GET', 'POST'])
 def review_list_api_view(request):
     if request.method == 'GET':
-        reviews = Review.objects.all()
+        reviews = Review.objects.select_related('product').all()#3
         data = ReviewListSerializers(reviews, many=True).data
         return  Response(data=data, status=status.HTTP_200_OK)
 
     elif request.method == 'POST':
+        serializer = ReviewValidateSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(status=status.HTTP_400_BAD_REQUEST,
+                            data=serializer.errors)
+
         text = request.data.get('text')
         stars = request.data.get('stars')
         product_id = request.data.get('product_id')
@@ -126,7 +148,7 @@ def review_list_api_view(request):
 @api_view(['GET', 'PUT', 'DELETE'])
 def review_detail_api_view(request, id):
     try:
-        reviews = Review.objects.get(id=id)
+        reviews = Review.objects.select_related('product').get(id=id)
     except Review.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
@@ -135,6 +157,9 @@ def review_detail_api_view(request, id):
         return Response(data=data, status=status.HTTP_200_OK)
 
     elif request.method == 'PUT':
+        serializer = ReviewValidateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
         reviews.text = request.data.get('text')
         reviews.stars = request.data.get('stars')
         reviews.product_id = request.data.get('product_id')
