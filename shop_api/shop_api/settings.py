@@ -43,6 +43,13 @@ INSTALLED_APPS = [
     'users'
 ]
 
+REST_FRAMEWORK = {
+    'PAGE_SIZE': 4,
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ]
+}
+
 QUERYCOUNT = {
     'THRESHOLDS': {
         'MEDIUM': 50,

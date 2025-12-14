@@ -1,15 +1,15 @@
 from django.urls import  path
 from . import  views
-
+from .constants import  LIST_CREATE,RETRIEVE_UPDATE_DESTROY
 urlpatterns = [
-    path('categories/', views.category_list_api_view),
-    path('categories/<int:id>/', views.category_detail_api_view),
+    path('categories/', views.CategoryViewSet.as_view(LIST_CREATE)),
+    path('categories/<int:id>/', views.CategoryViewSet.as_view(RETRIEVE_UPDATE_DESTROY)),
 
-    path('products/', views.product_list_api_view),
-    path('products/<int:id>/', views.product_detail_api_view),
+    path('products/', views.ProductViewSet.as_view(LIST_CREATE)),
+    path('products/<int:id>/', views.ProductViewSet.as_view(RETRIEVE_UPDATE_DESTROY)),
 
-    path('reviews/', views.review_list_api_view),
-    path('reviews/<int:id>/', views.review_detail_api_view),
+    path('reviews/', views.ReviewViewSet.as_view(LIST_CREATE)),
+    path('reviews/<int:id>/', views.ReviewViewSet.as_view(RETRIEVE_UPDATE_DESTROY)),
 
-    path('products/reviews/', views.product_review_list_api_view),
+    path('products/reviews/', views.ProductReviewViewSet.as_view()),
 ]

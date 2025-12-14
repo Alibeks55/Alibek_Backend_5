@@ -4,6 +4,26 @@ from  . import  models
 from .models import Product, Review, Category
 
 
+class CategorySerializers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Category
+        fields = '__all__'
+
+class ProductSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Product
+        fields = '__all__'
+
+class ReviewSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = models.Review
+        fields = '__all__'
+
+
+
+
+
+
 class CategoryListSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Category
@@ -14,7 +34,6 @@ class CategoryDetailSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Category
         fields = '__all__'
-
 
 
 class ProductListSerializers(serializers.ModelSerializer):
@@ -31,7 +50,6 @@ class ProductDetailSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Product
         fields = '__all__'
-
 
 
 class ReviewListSerializers(serializers.ModelSerializer):
