@@ -1,6 +1,20 @@
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework_simplejwt.tokens import Token
 from users.models import UsersCod, CustomUser
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        if user.birthdate:
+            token['birthdate'] = user.birthdate.strftime('%Y-%m-%d')
+        else:
+            token['birthdate'] = None
+        return token
 
 class UserBaseSerializer(serializers.Serializer):
     email = serializers.EmailField()

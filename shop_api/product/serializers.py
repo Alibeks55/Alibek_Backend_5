@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from  rest_framework import  serializers
 from  . import  models
 from .models import Product, Review, Category
+from common.validators import validate_age_user
 
 
 class CategorySerializers(serializers.ModelSerializer):
@@ -9,17 +10,27 @@ class CategorySerializers(serializers.ModelSerializer):
         model = models.Category
         fields = '__all__'
 
+    def validate(self, attrs):
+        validate_age_user(self.context['request'])
+        return attrs
+
 class ProductSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Product
         fields = '__all__'
+
+    def validate(self, attrs):
+        validate_age_user(self.context['request'])
+        return attrs
 
 class ReviewSerializers(serializers.ModelSerializer):
     class Meta:
         model = models.Review
         fields = '__all__'
 
-
+    def validate(self, attrs):
+        validate_age_user(self.context['request'])
+        return attrs
 
 
 

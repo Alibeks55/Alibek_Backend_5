@@ -4,10 +4,17 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 from rest_framework.generics import CreateAPIView
-from .serializers import UserCreateSerializer, UserAuthSerializer, ConfirmationSerializer
+from .serializers import (UserCreateSerializer,
+                          UserAuthSerializer,
+                          ConfirmationSerializer,
+                          CustomTokenObtainPairSerializer)
 from users.models import UsersCod, CustomUser
 import random
 import string
+from rest_framework_simplejwt.views import TokenObtainPairView
+
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 
 class AuthorizationAPIView(CreateAPIView):
@@ -45,12 +52,14 @@ class RegistrationAPIView(CreateAPIView):
         email = serializer.validated_data['email']
         password = serializer.validated_data['password']
         phone_number = serializer.validated_data['phone_number']
+        birthdate = serializer.validated_data['birthdate']
 
         with transaction.atomic():
             user = CustomUser.objects.create_user(
                 email=email,
                 password=password,
                 phone_number=phone_number,
+                birthdate=birthdate,
                 is_active=False
             )
 
